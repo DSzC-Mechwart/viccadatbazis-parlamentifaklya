@@ -4,7 +4,40 @@
     ViewData["Title"] = "Home page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<h1>Viccek</h1>
+
+<div class="text-center" id="jokeList">
+    <ul>
+        @foreach(var vicc in Model.Viccek)
+        {  
+            <li>
+                <strong>@vicc.Tartalom</strong><br />
+                <em>Feltöltő: @vicc.Feltolto</em><br />
+                <span>Lájkok: @vicc.Tetszik</span><br />
+                <button onclick="vote(@vicc.Id, 'like')">Tetszik</button>
+                <button onclick="vote(@vicc.Id, 'dislike')"></button>
+            </li>
+        }
+    </ul>
 </div>
+
+@section Scripts {
+    <script>
+        async function vote(jokeId, type) {
+            const response = await fetch(`/api/jokes/${jokeId}/vote`, {
+                method: 'POST',
+                headers: {
+                    'content-Type': 'application/json'
+                },
+                body: JSON.stringify(type)
+            });
+
+            if (response.ok) {
+                const updatedJoke = await response.json();
+                location.reload();
+            } else {
+                alert('Hiba történt a szavazás során!');
+            }
+        }
+    </script>
+}
